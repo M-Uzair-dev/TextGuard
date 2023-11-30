@@ -90,7 +90,7 @@ const MainPage = React.memo(() => {
       setIsLoading(true);
 
       try {
-        fetch(`http://localhost:5000/messages/${id}`)
+        fetch(`https://text-guard-api.vercel.app/messages/${id}`)
           .then((response) => response.json())
           .then((datatemp) => {
             if (data.length !== 0) setData(datatemp.reverse());
@@ -118,7 +118,7 @@ const MainPage = React.memo(() => {
         message: message,
         highlighted: isChecked,
       };
-      fetch("http://localhost:5000/messages/new", {
+      fetch("https://text-guard-api.vercel.app/messages/new", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -169,7 +169,7 @@ const MainPage = React.memo(() => {
         highlighted: iseditvalueChecked,
       };
 
-      fetch(`http://localhost:5000/messages/${editingnote}`, {
+      fetch(`https://text-guard-api.vercel.app/messages/${editingnote}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -204,7 +204,7 @@ const MainPage = React.memo(() => {
         name: changingname,
       };
 
-      fetch(`http://localhost:5000/users/update/${id}`, {
+      fetch(`https://text-guard-api.vercel.app/users/update/${id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -238,7 +238,7 @@ const MainPage = React.memo(() => {
         password: changingpass,
       };
 
-      fetch(`http://localhost:5000/users/update/${id}`, {
+      fetch(`https://text-guard-api.vercel.app/users/update/${id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -267,7 +267,7 @@ const MainPage = React.memo(() => {
     }
   };
   async function deleteMessage(id) {
-    const url = `http://localhost:5000/messages/${id}`;
+    const url = `https://text-guard-api.vercel.app/messages/${id}`;
 
     try {
       const response = await fetch(url, {
