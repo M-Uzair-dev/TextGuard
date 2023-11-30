@@ -72,7 +72,7 @@ const Login = () => {
       (async () => {
         try {
           const temppostedUser = await fetch(
-            "http://localhost:5000/users/new",
+            "https://text-guard-api.vercel.app/users/new",
             {
               method: "POST",
               headers: {
@@ -122,7 +122,7 @@ const Login = () => {
     } else {
       (async () => {
         try {
-          let response = await fetch("http://localhost:5000/users/login", {
+          let response = await fetch("https://text-guard-api.vercel.app/users/login", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
