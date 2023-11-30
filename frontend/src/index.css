@@ -1,0 +1,27 @@
+body {
+  margin: 0;
+  font-family: "Poppins", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.light {
+  --bg-color: rgb(224, 202, 248); /* White background */
+  --primary-color: rgb(202, 175, 231); /* Light gray for primary elements */
+  --secondary-color: rgb(
+    195,
+    147,
+    247
+  ); /* Slightly darker gray for secondary elements */
+  --text-color: #000000; /* Dark gray text color */
+}
+
+.dark {
+  --bg-color: rgb(20, 12, 29);
+  --primary-color: rgb(33, 21, 46);
+  --secondary-color: rgb(54, 36, 73);
+  --text-color: #ffff;
+}
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}

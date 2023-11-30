@@ -1,0 +1,117 @@
+.maindiv {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition: 0.2s ease all;
+}
+.card {
+  background-color: var(--primary-color);
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 30px;
+  transform: translateY(20px);
+}
+.logo {
+  position: absolute;
+  top: 15px;
+  left: 20px;
+  height: 120px;
+}
+.heading {
+  font-weight: 300;
+  font-size: 40px;
+  margin: 0 0 10px 0;
+}
+.card input,
+.card button {
+  width: fit-content;
+}
+.card input {
+  color: (var(--text-color));
+  background-color: transparent;
+  width: 100%;
+  outline: none;
+  border: none;
+  border-bottom: solid 2px rgb(122, 122, 122);
+  margin: 0 0 10px 0;
+  font-family: "Poppins", sans-serif;
+  height: 25px;
+  font-size: 20px;
+  max-width: 250px;
+  padding-bottom: 4px;
+  font-weight: 300;
+}
+.redborder {
+  border-bottom: solid 2px rgb(255, 0, 0);
+}
+.card button {
+  cursor: pointer;
+  font-family: "Poppins", sans-serif;
+  background-color: rgba(180, 105, 255, 1);
+  color: var(--bg-color);
+  border: none;
+  padding: 10px 30px;
+  border-radius: 5px;
+  transition: all 0.3s ease;
+  margin: 20px 0 0 0;
+  font-family: "Poppins", sans-serif;
+  font-size: 18px;
+  font-weight: 300;
+  letter-spacing: 1px;
+}
+.card label {
+  margin: 10px 0 5px 0;
+  font-weight: 300;
+  cursor: pointer;
+}
+.card input:focus {
+  border-bottom: solid 2px rgb(128, 66, 194);
+}
+.card button:hover {
+  opacity: 80%;
+}
+.text {
+  margin: 10px 0 0 0;
+  font-size: 16px;
+  font-weight: 300;
+}
+.text span {
+  text-decoration: underline;
+  color: rgb(0, 140, 255);
+  cursor: pointer;
+}
+.themetoggle {
+  position: absolute;
+  top: 63px;
+  right: 50px;
+  width: 30px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  outline: none;
+  cursor: pointer;
+}
+.themetoggle img {
+  width: 100%;
+}
+.err {
+  color: red;
+  margin: 0;
+}
+@media (max-width: 400px) {
+  .card {
+    width: 70%;
+  }
+}
