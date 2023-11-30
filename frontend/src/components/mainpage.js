@@ -367,7 +367,7 @@ const MainPage = React.memo(() => {
   return (
     <div className="mainpage">
       {showconfirm ? (
-        <div className="confirm">
+        <div className="confirm" style={{z-index : "99999999999999999999999999999999999999999999999999999"}}>
           <h1>{confirmmessage}</h1>
           <div className="buttonsincon">
             <button
