@@ -5,20 +5,18 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 .light {
-  --bg-color: rgb(224, 202, 248); /* White background */
-  --primary-color: rgb(202, 175, 231); /* Light gray for primary elements */
-  --secondary-color: rgb(
-    195,
-    147,
-    247
-  ); /* Slightly darker gray for secondary elements */
-  --text-color: #000000; /* Dark gray text color */
+  --bg-color: rgb(224, 202, 248);
+  --primary-color: rgb(202, 175, 231);
+  --secondary-color: rgb(195, 147, 247);
+  --third-color: rgb(170, 115, 230);
+  --text-color: #000000;
 }
 
 .dark {
   --bg-color: rgb(20, 12, 29);
   --primary-color: rgb(33, 21, 46);
   --secondary-color: rgb(54, 36, 73);
+  --third-color: rgb(95, 54, 138);
   --text-color: #ffff;
 }
 code {
