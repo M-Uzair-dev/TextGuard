@@ -122,16 +122,19 @@ const Login = () => {
     } else {
       (async () => {
         try {
-          let response = await fetch("https://text-guard-api.vercel.app/users/login", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              email: email,
-              password: password,
-            }),
-          });
+          let response = await fetch(
+            "https://text-guard-api.vercel.app/users/login",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                email: email,
+                password: password,
+              }),
+            }
+          );
           let data = await response.json();
           if (data.message === "No user with email") {
             setMessage("Email not found.");
