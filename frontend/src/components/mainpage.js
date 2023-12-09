@@ -9,6 +9,7 @@ import star from "../images/star.png";
 import search from "../images/search.png";
 import { useSnackbar } from "notistack";
 import arrow from "../images/arrow.png";
+import { TailSpin } from "react-loader-spinner";
 
 import "./mainpage.css";
 
@@ -18,15 +19,16 @@ const MainPage = React.memo(() => {
     const decrypted = CryptoJS.AES.decrypt(encryptedData, encryptionKey);
     return decrypted.toString(CryptoJS.enc.Utf8);
   };
+  const encrypt = (data) => {
+    const encrypted = CryptoJS.AES.encrypt(data, encryptionKey);
+    return encrypted.toString();
+  };
+
   const id = localStorage.getItem("ZWltuz3pJK5edXdijsa0moe");
   const encname = localStorage.getItem("$2b$10$10414khcd6b4kxVAP");
   const name = decrypt(encname);
   const encemail = localStorage.getItem("/flu.BtyokRIg8kbXr");
   const email = decrypt(encemail);
-
-  const password = localStorage.getItem(
-    "7d49304ad154fliELghtkJSpg.uFBHTbig60mHKnLDVOt/zn"
-  );
   const [showmaindrop, setShowmaindrop] = useState(false);
   const [showfilterdrop, setShowfilterdrop] = useState(false);
   const [shownotedrop, setShowNotedrop] = useState();
@@ -39,20 +41,22 @@ const MainPage = React.memo(() => {
   const [heading, setHeading] = useState("");
   const [data, setData] = useState([]);
   const [message, setMessage] = useState([]);
-  const [reloadeffect, setRealoadeffect] = useState(false);
+  const [reloadeffect, setRealoadeffect] = useState(true);
   const [showedittab, setShowedittab] = useState(false);
   const [editingnote, setEditingnote] = useState("");
   const [iseditvalueChecked, setIseditvalueChecked] = useState(false);
   const [redborder, setRedborder] = useState("");
   const [changingname, setChangingname] = useState(name);
   const [shownametab, setShownametab] = useState(false);
-  const [changingpass, setChangingpass] = useState(password);
+  const [changingpass, setChangingpass] = useState("");
   const [showpasstab, setShowpasstab] = useState(false);
   const [mapdata, setMapdata] = useState([]);
   const [searchinput, setSearchinput] = useState("");
   const [showconfirm, setShowconfirm] = useState(false);
   const [tempid, setTempid] = useState("");
+  const [datachanged, setDatachanged] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
+  const [spinner, setSpinner] = useState("");
   const [confirmmessage, setConfirmmessage] = useState(
     "Are you sure you want to delete this note ?"
   );
@@ -63,54 +67,65 @@ const MainPage = React.memo(() => {
         : "0 0 20px rgba(205, 64, 240, 0.419)",
     filter:
       localStorage.getItem("dark") === "false"
-        ? "brightness(85%)"
+        ? "brightness(95%)"
         : "brightness(150%)",
   };
   useEffect(() => {
-    const storedTheme = localStorage.getItem("dark");
+    const dosmth = () => {
+      const storedTheme = localStorage.getItem("dark");
 
-    if (storedTheme === null) {
-      setTheme(true);
-    } else {
-      setTheme(storedTheme === "true");
-      document.body.className = storedTheme === "true" ? "dark" : "light";
-    }
-    if (
-      id === undefined ||
-      id === null ||
-      name === undefined ||
-      name === null ||
-      email === undefined ||
-      email === null
-    ) {
-      localStorage.clear();
-      window.location.reload();
-      setIsLoading(false);
-    } else {
-      setIsLoading(true);
-
-      try {
-        fetch(`https://text-guard-api.vercel.app/messages/${id}`)
-          .then((response) => response.json())
-          .then((datatemp) => {
-            if (data.length !== 0) setData(datatemp.reverse());
-            setMapdata(datatemp.reverse());
-          });
-      } catch (err) {
-        console.error(err);
+      if (storedTheme === null) {
+        setTheme(true);
+      } else {
+        setTheme(storedTheme === "true");
+        document.body.className = storedTheme === "true" ? "dark" : "light";
       }
-      setIsLoading(false);
+      if (
+        id === undefined ||
+        id === null ||
+        name === undefined ||
+        name === null ||
+        email === undefined ||
+        email === null
+      ) {
+        localStorage.clear();
+        window.location.reload();
+        setIsLoading(false);
+      } else {
+        setIsLoading(true);
+
+        try {
+          fetch(`https://text-guard-api.vercel.app/messages/${id}`)
+            .then((response) => response.json())
+            .then((datatemp) => {
+              if (datatemp.length !== 0) {
+                setData(datatemp.reverse());
+                setMapdata(datatemp.reverse());
+                setDatachanged(true);
+              }
+            });
+        } catch (err) {
+          console.error(err);
+        }
+        setIsLoading(false);
+      }
+    };
+    if (reloadeffect) {
+      dosmth();
+      setRealoadeffect(false);
     }
   }, [reloadeffect]);
   let logout = () => {
-    localStorage.clear();
+    localStorage.removeItem("$10$5HEglOdZhliELg");
     window.location.reload();
   };
   function sendData() {
     if (message === "") {
       setRedborder("message");
+      setSpinner("n/a");
     } else if (heading === "") {
       setRedborder("heading");
+      setSpinner("n/a");
     } else {
       const data = {
         userId: id,
@@ -138,10 +153,12 @@ const MainPage = React.memo(() => {
           setIsChecked(false);
           setShownewtab(false);
           setRedborder("");
+          setSpinner("n/a");
           enqueueSnackbar("Note added Successfully", { variant: "success" });
         })
         .catch((error) => {
           enqueueSnackbar("An error occured :-(", { variant: "error" });
+          setSpinner("n/a");
         });
     }
   }
@@ -160,8 +177,10 @@ const MainPage = React.memo(() => {
   let editdata = () => {
     if (message === "") {
       setRedborder("message");
+      setSpinner("n/a");
     } else if (heading === "") {
       setRedborder("heading");
+      setSpinner("n/a");
     } else {
       const data = {
         message: message,
@@ -188,17 +207,20 @@ const MainPage = React.memo(() => {
           setHeading("");
           setMessage("");
           setRedborder("");
-          setRealoadeffect(!reloadeffect);
+          setRealoadeffect(true);
+          setSpinner("n/a");
           enqueueSnackbar("Note edited Successfully", { variant: "success" });
         })
         .catch((error) => {
           enqueueSnackbar("An error occured :-(", { variant: "error" });
+          setSpinner("n/a");
         });
     }
   };
   let editname = () => {
     if (changingname === "") {
       setRedborder("message");
+      setSpinner("n/a");
     } else {
       const data = {
         name: changingname,
@@ -221,18 +243,24 @@ const MainPage = React.memo(() => {
         .then(() => {
           setShownametab(false);
           setRedborder("");
-          localStorage.setItem("name", changingname);
-          setRealoadeffect(!reloadeffect);
+          localStorage.setItem(
+            "$2b$10$10414khcd6b4kxVAP",
+            encrypt(changingname)
+          );
+          setRealoadeffect(true);
+          setSpinner("n/a");
           enqueueSnackbar("Name edited Successfully", { variant: "success" });
         })
         .catch((error) => {
           enqueueSnackbar("An error occured :-(", { variant: "error" });
+          setSpinner("n/a");
         });
     }
   };
   let editpassword = () => {
     if (changingpass === "") {
       setRedborder("message");
+      setSpinner("n/a");
     } else {
       const data = {
         password: changingpass,
@@ -255,18 +283,20 @@ const MainPage = React.memo(() => {
         .then(() => {
           setShowpasstab(false);
           setRedborder("");
-          localStorage.setItem("password", changingpass);
-          setRealoadeffect(!reloadeffect);
+          setRealoadeffect(true);
+          setSpinner("n/a");
           enqueueSnackbar("Password edited Successfully", {
             variant: "success",
           });
         })
         .catch((error) => {
           enqueueSnackbar("An error occured :-(", { variant: "error" });
+          setSpinner("n/a");
         });
     }
   };
   async function deleteMessage(id) {
+    enqueueSnackbar("deleting...", { variant: "success" });
     const url = `https://text-guard-api.vercel.app/messages/${id}`;
 
     try {
@@ -275,7 +305,7 @@ const MainPage = React.memo(() => {
       });
 
       if (response.status === 200) {
-        setRealoadeffect(!reloadeffect);
+        setRealoadeffect(true);
         enqueueSnackbar("Note deleted Successfully", {
           variant: "success",
         });
@@ -290,13 +320,13 @@ const MainPage = React.memo(() => {
   }
   let searchdata = () => {
     const searchTerm = searchinput.toLowerCase();
-
+    console.log(searchTerm);
     const filteredData = data.filter((item) => {
       const heading = item.heading.toLowerCase();
 
       return heading.includes(searchTerm);
     });
-
+    console.log(filteredData);
     setMapdata(filteredData);
   };
   let filterdata = (b) => {
@@ -321,9 +351,7 @@ const MainPage = React.memo(() => {
       );
     } else if (x === "pass") {
       setShowconfirm(true);
-      setConfirmmessage(
-        `Are you sure you want to change your password to ${changingpass} ?`
-      );
+      setConfirmmessage(`Are you sure you want to change your password ?`);
     } else if (x === "edit") {
       setShowconfirm(true);
       setConfirmmessage("Are you sure you want to edit this note ?");
@@ -344,17 +372,19 @@ const MainPage = React.memo(() => {
         confirmmessage ===
         `Are you sure you want to change your name to ${changingname} ?`
       ) {
+        setSpinner("name");
         editname();
         setShowconfirm(false);
       } else if (
-        confirmmessage ===
-        `Are you sure you want to change your password to ${changingpass} ?`
+        confirmmessage === `Are you sure you want to change your password ?`
       ) {
+        setSpinner("pass");
         editpassword();
         setShowconfirm(false);
       } else if (
         confirmmessage === "Are you sure you want to edit this note ?"
       ) {
+        setSpinner("edit");
         editdata();
         setShowconfirm(false);
         setShowNotedrop(false);
@@ -367,7 +397,10 @@ const MainPage = React.memo(() => {
   return (
     <div className="mainpage">
       {showconfirm ? (
-        <div className="confirm" style={{zIndex : "999999999999999999999999999999999999999999999999"}}>
+        <div
+          className="confirm"
+          style={{ zIndex: "999999999999999999999999999999999999999999999999" }}
+        >
           <h1>{confirmmessage}</h1>
           <div className="buttonsincon">
             <button
@@ -400,20 +433,41 @@ const MainPage = React.memo(() => {
             }}
             style={redborder === "message" ? { border: "2px solid red" } : {}}
           />
-          <button
-            onClick={() => {
-              if (changingname.length < 5) {
-                setRedborder("message");
-                enqueueSnackbar("Name must be longer than 5 characters", {
-                  variant: "error",
-                });
-              } else {
-                confirm("name");
-              }
-            }}
-          >
-            Change
-          </button>
+          {spinner === "name" ? (
+            <button>
+              <TailSpin
+                height="25"
+                width="25"
+                color="black"
+                ariaLabel="tail-spin-loading"
+                radius="1"
+                wrapperStyle={{}}
+                wrapperClass=""
+                visible={true}
+              />
+            </button>
+          ) : (
+            <button
+              onClick={() => {
+                if (changingname.length === 0) {
+                  setRedborder("message");
+                  enqueueSnackbar("Please enter a name.", {
+                    variant: "error",
+                  });
+                } else if (changingname.length < 5) {
+                  setRedborder("message");
+                  enqueueSnackbar("Name must be longer than 5 characters", {
+                    variant: "error",
+                  });
+                } else {
+                  confirm("name");
+                }
+              }}
+            >
+              Change
+            </button>
+          )}
+
           <img
             alt="add logo"
             src={add}
@@ -430,7 +484,7 @@ const MainPage = React.memo(() => {
 
       {showpasstab ? (
         <div className="changename">
-          <h1>Change Your Password</h1>
+          <h1>Enter new password</h1>
 
           <input
             value={changingpass}
@@ -440,13 +494,35 @@ const MainPage = React.memo(() => {
             }}
             style={redborder === "message" ? { border: "2px solid red" } : {}}
           />
-          <button
-            onClick={() => {
-              confirm("pass");
-            }}
-          >
-            Change
-          </button>
+          {spinner === "pass" ? (
+            <button>
+              <TailSpin
+                height="25"
+                width="25"
+                color="black"
+                ariaLabel="tail-spin-loading"
+                radius="1"
+                wrapperStyle={{}}
+                wrapperClass=""
+                visible={true}
+              />
+            </button>
+          ) : (
+            <button
+              onClick={() => {
+                if (changingpass.length < 5) {
+                  setRedborder("message");
+                  enqueueSnackbar("Password cannot be empty.", {
+                    variant: "error",
+                  });
+                } else {
+                  confirm("pass");
+                }
+              }}
+            >
+              Change
+            </button>
+          )}
           <img
             alt="add logo"
             src={add}
@@ -500,14 +576,30 @@ const MainPage = React.memo(() => {
             <div className="tick_mark"></div>
           </label>
         </div>
-        <button
-          className="addbuttonindrop"
-          onClick={() => {
-            sendData();
-          }}
-        >
-          Add
-        </button>
+        {spinner === "add" ? (
+          <button className="addbuttonindrop">
+            <TailSpin
+              height="25"
+              width="25"
+              color="black"
+              ariaLabel="tail-spin-loading"
+              radius="1"
+              wrapperStyle={{}}
+              wrapperClass=""
+              visible={true}
+            />
+          </button>
+        ) : (
+          <button
+            className="addbuttonindrop"
+            onClick={() => {
+              setSpinner("add");
+              sendData();
+            }}
+          >
+            Add
+          </button>
+        )}
         <img
           alt="add logo"
           src={add}
@@ -559,14 +651,29 @@ const MainPage = React.memo(() => {
             <div className="tick_mark"></div>
           </label>
         </div>
-        <button
-          className="addbuttonindrop"
-          onClick={() => {
-            confirm("edit");
-          }}
-        >
-          Add
-        </button>
+        {spinner === "edit" ? (
+          <button className="addbuttonindrop">
+            <TailSpin
+              height="25"
+              width="25"
+              color="black"
+              ariaLabel="tail-spin-loading"
+              radius="1"
+              wrapperStyle={{}}
+              wrapperClass=""
+              visible={true}
+            />
+          </button>
+        ) : (
+          <button
+            className="addbuttonindrop"
+            onClick={() => {
+              confirm("edit");
+            }}
+          >
+            Confirm
+          </button>
+        )}
         <img
           alt="add logo"
           src={add}
@@ -657,7 +764,6 @@ const MainPage = React.memo(() => {
           </p>
           <p
             onClick={() => {
-              setChangingpass(password);
               setShowpasstab(true);
               setShowmaindrop(false);
             }}
@@ -793,9 +899,7 @@ const MainPage = React.memo(() => {
         </div>
       </div>
       <div className="notes">
-        {isLoading ? (
-          <h1>Loading...</h1>
-        ) : mapdata.length === 0 ? (
+        {mapdata.length === 0 && datachanged == true ? (
           <h1 className="nonotestext">
             You haven't created any notes yet, Please{" "}
             <span
@@ -807,6 +911,8 @@ const MainPage = React.memo(() => {
               Add a note
             </span>
           </h1>
+        ) : isLoading ? (
+          <h1>Loading...</h1>
         ) : (
           mapdata.map((element, index) => (
             <div key={index}>
@@ -817,27 +923,27 @@ const MainPage = React.memo(() => {
                 <div className="text">
                   <p className="date">
                     {element.date.substring(8, 10)}{" "}
-                    {element.date.substring(5, 7) === 1
+                    {element.date.substring(5, 7) === "1"
                       ? "January"
-                      : element.date.substring(5, 7) === 2
+                      : element.date.substring(5, 7) === "2"
                       ? "February"
-                      : element.date.substring(5, 7) === 3
+                      : element.date.substring(5, 7) === "3"
                       ? "March"
-                      : element.date.substring(5, 7) === 4
+                      : element.date.substring(5, 7) === "4"
                       ? "April"
-                      : element.date.substring(5, 7) === 5
+                      : element.date.substring(5, 7) === "5"
                       ? "May"
-                      : element.date.substring(5, 7) === 6
+                      : element.date.substring(5, 7) === "6"
                       ? "June"
-                      : element.date.substring(5, 7) === 7
+                      : element.date.substring(5, 7) === "7"
                       ? "July"
-                      : element.date.substring(5, 7) === 8
+                      : element.date.substring(5, 7) === "8"
                       ? "August"
-                      : element.date.substring(5, 7) === 9
+                      : element.date.substring(5, 7) === "9"
                       ? "September"
-                      : element.date.substring(5, 7) === 10
+                      : element.date.substring(5, 7) === "10"
                       ? "October"
-                      : element.date.substring(5, 7) === 11
+                      : element.date.substring(5, 7) === "11"
                       ? "November"
                       : "December"}{" "}
                     {element.date.substring(0, 4)}
