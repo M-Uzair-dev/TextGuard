@@ -5,6 +5,7 @@ import CryptoJS from "crypto-js";
 import moon from "../images/moon.png";
 import sun from "../images/sun.png";
 import logo from "../images/logo.png";
+import { TailSpin } from "react-loader-spinner";
 
 const Login = () => {
   const [signup, setSignup] = useState(false);
@@ -16,6 +17,7 @@ const Login = () => {
   const [message, setMessage] = useState("");
   const [redname, setRedname] = useState(false);
   const [redemail, setRedemail] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [redpass, setRedpass] = useState(false);
 
   const encryptionKey = "textguard123";
@@ -48,26 +50,32 @@ const Login = () => {
     return emailPattern.test(text);
   }
   const Signup = () => {
+    setLoading(true);
     if (name === "") {
       setMessage("Please enter your name");
       setRedname(true);
       setErr(true);
+      setLoading(false);
     } else if (name.length < 5) {
-      setMessage("Name must be longer than 5 characters");
+      setMessage("Name is too short.");
       setRedname(true);
+      setLoading(false);
       setErr(true);
     } else if (email === "") {
       setMessage("Please enter your email");
       setRedemail(true);
       setErr(true);
+      setLoading(false);
     } else if (password === "") {
       setMessage("Please enter your password");
       setRedpass(true);
+      setLoading(false);
       setErr(true);
     } else if (!hasEmail(email)) {
-      setMessage("Please enter a validemail");
+      setMessage("Please enter a valid email");
       setRedemail(true);
       setErr(true);
+      setLoading(false);
     } else {
       (async () => {
         try {
@@ -91,6 +99,7 @@ const Login = () => {
             setMessage("Email already registered");
             setRedemail(true);
             setErr(true);
+            setLoading(false);
           } else {
             localStorage.setItem("$10$5HEglOdZhliELg", true);
             let encname = encrypt(postedUser.name);
@@ -98,27 +107,34 @@ const Login = () => {
             localStorage.setItem("$2b$10$10414khcd6b4kxVAP", encname);
             localStorage.setItem("/flu.BtyokRIg8kbXr", encemail);
             localStorage.setItem("ZWltuz3pJK5edXdijsa0moe", postedUser._id);
+            setLoading(false);
             window.location.reload();
           }
         } catch (error) {
           console.error("Error:", error);
+          setLoading(false);
         }
       })();
     }
   };
   const userlogin = () => {
+    setLoading(true);
+
     if (email === "") {
       setMessage("Please enter your email");
       setRedemail(true);
       setErr(true);
+      setLoading(false);
     } else if (password === "") {
-      setMessage("Please enter your password");
+      setMessage("Please enter a password");
       setRedpass(true);
       setErr(true);
+      setLoading(false);
     } else if (!hasEmail(email)) {
-      setMessage("Please enter a validemail");
+      setMessage("Please enter a valid email");
       setRedemail(true);
       setErr(true);
+      setLoading(false);
     } else {
       (async () => {
         try {
@@ -140,10 +156,12 @@ const Login = () => {
             setMessage("Email not found.");
             setRedemail(true);
             setErr(true);
+            setLoading(false);
           } else if (data.message === "Wrong Password") {
             setMessage("Wrong Password");
             setRedpass(true);
             setErr(true);
+            setLoading(false);
           } else {
             localStorage.setItem("$10$5HEglOdZhliELg", true);
             let encname = encrypt(data.user.name);
@@ -155,10 +173,12 @@ const Login = () => {
               "7d49304ad154fliELghtkJSpg.uFBHTbig60mHKnLDVOt/zn",
               data.user.password
             );
+            setLoading(false);
             window.location.reload();
           }
         } catch (err) {
           console.error("Error", err);
+          setLoading(false);
         }
       })();
     }
@@ -202,9 +222,24 @@ const Login = () => {
             }}
           />
           {err ? <p className="err">{message}</p> : <></>}
-          <button className="button" onClick={userlogin}>
-            Login
-          </button>
+          {loading ? (
+            <button className="button">
+              <TailSpin
+                height="25"
+                width="25"
+                color="black"
+                ariaLabel="tail-spin-loading"
+                radius="1"
+                wrapperStyle={{}}
+                wrapperClass=""
+                visible={true}
+              />
+            </button>
+          ) : (
+            <button className="button" onClick={userlogin}>
+              Login
+            </button>
+          )}
           <p className="text">
             Don't have an account ?{" "}
             <span
@@ -273,9 +308,24 @@ const Login = () => {
           />
           {err ? <p className="err">{message}</p> : <></>}
 
-          <button className="button" onClick={Signup}>
-            Signup
-          </button>
+          {loading ? (
+            <button className="button">
+              <TailSpin
+                height="25"
+                width="25"
+                color="black"
+                ariaLabel="tail-spin-loading"
+                radius="1"
+                wrapperStyle={{}}
+                wrapperClass=""
+                visible={true}
+              />
+            </button>
+          ) : (
+            <button className="button" onClick={Signup}>
+              Signup
+            </button>
+          )}
           <p className="text">
             Already have an account ?{" "}
             <span
