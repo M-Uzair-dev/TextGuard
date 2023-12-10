@@ -57,6 +57,7 @@ const MainPage = React.memo(() => {
   const [datachanged, setDatachanged] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
   const [spinner, setSpinner] = useState("");
+  const [empval, setEmpval] = useState("");
   const [confirmmessage, setConfirmmessage] = useState(
     "Are you sure you want to delete this note ?"
   );
@@ -98,11 +99,9 @@ const MainPage = React.memo(() => {
           fetch(`https://text-guard-api.vercel.app/messages/${id}`)
             .then((response) => response.json())
             .then((datatemp) => {
-              if (datatemp.length !== 0) {
-                setData(datatemp.reverse());
-                setMapdata(datatemp.reverse());
-                setDatachanged(true);
-              }
+              setData(datatemp.reverse());
+              setMapdata(datatemp.reverse());
+              setDatachanged(true);
             });
         } catch (err) {
           console.error(err);
@@ -319,24 +318,34 @@ const MainPage = React.memo(() => {
     }
   }
   let searchdata = () => {
+    setEmpval("");
     const searchTerm = searchinput.toLowerCase();
-    console.log(searchTerm);
     const filteredData = data.filter((item) => {
       const heading = item.heading.toLowerCase();
 
       return heading.includes(searchTerm);
     });
-    console.log(filteredData);
-    setMapdata(filteredData);
+    if (filteredData.length === 0) {
+      setEmpval(searchTerm);
+    } else setMapdata(filteredData);
   };
   let filterdata = (b) => {
     if (b === "no") {
+      setEmpval("");
       const filteredData = data.filter((item) => !item.highlighted);
-      setMapdata(filteredData);
+      if (filteredData.length === 0) {
+        setEmpval("nothighlighted");
+      } else {
+        setMapdata(filteredData);
+      }
     } else if (b === "yes") {
+      setEmpval("");
       const filteredData = data.filter((item) => item.highlighted);
-      setMapdata(filteredData);
+      if (filteredData.length === 0) {
+        setEmpval("highlighted");
+      } else setMapdata(filteredData);
     } else if (b === "all") {
+      setEmpval("");
       setMapdata(data);
     }
   };
@@ -571,6 +580,7 @@ const MainPage = React.memo(() => {
             onChange={(e) => {
               setIsChecked(e.target.checked);
             }}
+            checked={isChecked}
           />
           <label htmlFor="_checkbox-26">
             <div className="tick_mark"></div>
@@ -899,9 +909,21 @@ const MainPage = React.memo(() => {
         </div>
       </div>
       <div className="notes">
-        {mapdata.length === 0 && datachanged == true ? (
+        {empval === "nothighlighted" ? (
           <h1 className="nonotestext">
-            You haven't created any notes yet, Please{" "}
+            You don't have any non-highlighted notes.{" "}
+          </h1>
+        ) : empval === "highlighted" ? (
+          <h1 className="nonotestext">
+            You don't have any highlighted notes.{" "}
+          </h1>
+        ) : empval !== "" ? (
+          <h1 className="nonotestext">
+            No notes found for search "{empval}".{" "}
+          </h1>
+        ) : mapdata.length === 0 && datachanged == true ? (
+          <h1 className="nonotestext">
+            You don't have any notes, Please{" "}
             <span
               className="link"
               onClick={() => {
@@ -990,7 +1012,6 @@ const MainPage = React.memo(() => {
                       showtext === element._id
                         ? setShowtext(0)
                         : setShowtext(element._id);
-                      console.log(mapdata);
                     }}
                     className="notearrow"
                   />
